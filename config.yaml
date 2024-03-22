@@ -1,3 +1,0 @@
-config:
-  NEPTUNE_API_TOKEN: "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJjMDZjZThjNi01ODU3LTRjMjEtOWQwYS05YmJlNjJiNmRkM2EifQ=="
-  PROJECT_NAME: "szymkwiatkowski/human-segmentation"
