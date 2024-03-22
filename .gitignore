@@ -8,7 +8,7 @@ __pycache__/
 *.ckpt
 
 # Config
-*/config.yaml/*
+config.yaml
 
 # Neptune
 .neptune/
