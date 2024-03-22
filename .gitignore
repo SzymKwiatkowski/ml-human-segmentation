@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Saved models
+*.onnx
+*.ckpt
+
 # Config
 **/config.yaml/**
 

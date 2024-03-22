@@ -4,7 +4,7 @@ Clone repo with to include submodules:
 git clone --recurse-submodules https://github.com/SzymKwiatkowski/ml-human-segmentation.git
 ```
 
-## Usage
+## Train
 To run learning script use it as follows:
 ```bash
 python3 train.py -e 100
@@ -16,6 +16,11 @@ There is also a way of using neptune-ai by:
   - `-n` or `--use-neptune` - use neptune as logger (by default it is tensorboard)
   - `-c` or `--config` - provide config file path
 
+## Export
+To export models to onnx format use:
+```bash
+python3 src/export.py -m [model_path]
+```
 
 ## Setup
 To install requirements run:
