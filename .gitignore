@@ -4,17 +4,11 @@ __pycache__/
 *$py.class
 
 # Config
-config.yaml
-
-# Results 
-results.pickle
-
-# dataset
-data/
+**/config.yaml/**
 
 # Neptune
 .neptune/
-zpo_project/lightning_logs
+**/lightning_logs
 
 # C extensions
 *.so

@@ -1,0 +1,3 @@
+[submodule "Human-Segmentation-Dataset"]
+	path = ./data/Human-Segmentation-Dataset
+	url = https://github.com/SzymKwiatkowski/Human-Segmentation-Dataset.git

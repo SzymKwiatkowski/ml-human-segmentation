@@ -49,6 +49,8 @@ class TestName(unittest.TestCase):
         config = load_config(config_path)
         self.assertIsNotNone(config)
         self.assertEquals(config['config']['NEPTUNE_API_TOKEN'], "f2137b")
+        self.assertEquals(config['config']['PROJECT_NAME'], "kkkk")
+
 
 if __name__.__contains__("__main__"):
     print(__doc__)
