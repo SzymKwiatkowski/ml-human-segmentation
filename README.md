@@ -4,10 +4,15 @@ Clone repo with to include submodules:
 git clone --recurse-submodules https://github.com/SzymKwiatkowski/ml-human-segmentation.git
 ```
 
+If repo was already cloned but there is empty data folder then use:
+```bash
+git submodule update --init --recursive
+```
+
 ## Train
 To run learning script use it as follows:
 ```bash
-python3 train.py -e 100
+python3 train.py -e 100 -d data/
 ```
 
 There is also a way of using neptune-ai by:

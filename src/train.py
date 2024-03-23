@@ -20,6 +20,7 @@ def train(args):
     config_file = args.config
     max_epochs = args.epochs
     use_neptune = args.use_neptune
+    data_root_dir = args.data_root
 
     logger = None
     if use_neptune:
@@ -39,7 +40,7 @@ def train(args):
     precision = 32
 
     datamodule = SegmentationDataModule(
-        data_path=Path('data'),
+        data_path=Path(data_root_dir),
         images_path=Path('Training_Images'),
         masks_path=Path('Ground_Truth'),
         batch_size=16,
@@ -87,6 +88,7 @@ if __name__ == '__main__':
                         type=int, help='Specified number of maximum epochs')
     parser.add_argument('-n', '--use-neptune', action='store', default=False,
                         type=bool, help='Use neptune as logger')
+    parser.add_argument('-d', '--data-root', action='store', default='data')
 
     args = parser.parse_args()
     train(args)
