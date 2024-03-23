@@ -59,7 +59,7 @@ class SegmentationModel(pl.LightningModule):
 
         self.log('val_loss', loss, on_epoch=True, sync_dist=True)
         self.val_metrics.update(y_pred, y)
-        self.log_dict(self.val_metrics, sync_dist=True)
+        self.log_dict(self.val_metrics)
 
     def test_step(self, batch: dict[str, torch.Tensor], batch_idx: int) -> None:
         x, y = batch
@@ -68,14 +68,14 @@ class SegmentationModel(pl.LightningModule):
 
         self.log('test_loss', loss, on_epoch=True, sync_dist=True)
         self.test_metrics.update(y_pred, y)
-        self.log_dict(self.test_metrics, sync_dist=True)
+        self.log_dict(self.test_metrics)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.trainer.model.parameters(), lr=3e-4, amsgrad=True)
+        optimizer = torch.optim.AdamW(self.trainer.model.parameters(), lr=4e-4, amsgrad=True, weight_decay=1.5e-2)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
             mode='min',
-            factor=0.5,
+            factor=0.8,
             patience=5,
             min_lr=1e-6,
             verbose=True,
