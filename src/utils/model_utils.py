@@ -21,38 +21,38 @@ def count_parameters(model):
 
 
 def sparsity(model):
-  """ Calculates global model sparsity. """
-  a, b = 0, 0
-  for p in model.parameters():
-    a += p.numel()
-    b += (p == 0).sum()
-  return b / a
+    """ Calculates global model sparsity. """
+    a, b = 0, 0
+    for p in model.parameters():
+        a += p.numel()
+        b += (p == 0).sum()
+    return b / a
 
 
 def measure_latency(model, dtype=torch.float32, iterations: int = 10000) -> float:
-  infer_times = []
+    infer_times = []
 
-  for __ in range(iterations):
-    input_data = torch.randn(1, 3, 320, 320, dtype=dtype, device=model.device)
-    inference_start = perf_counter()
-    __ = model(input_data)
-    inference_time = perf_counter() - inference_start
-    infer_times.append(inference_time)
+    for __ in range(iterations):
+        input_data = torch.randn(1, 3, 320, 320, dtype=dtype, device=model.device)
+        inference_start = perf_counter()
+        __ = model(input_data)
+        inference_time = perf_counter() - inference_start
+        infer_times.append(inference_time)
 
-    return np.mean(infer_times)
+        return np.mean(infer_times)
 
 
 def export_onnx(model, dtype=torch.float32, onnx_model_name: str = 'model.onnx'):
-  model.eval()
-  input_data = torch.randn(1, 3, 320, 320, dtype=dtype, device=model.device)
+    model.eval()
+    input_data = torch.randn(1, 3, 320, 320, dtype=dtype, device=model.device)
 
-  torch.onnx.export(
-    model,
-    input_data,              # model input (or a tuple for multiple inputs)
-    onnx_model_name,         # where to save the model (can be a file or file-like object)
-    export_params=True,      # store the trained parameter weights inside the model file
-    opset_version=16,        # the ONNX version to export the model to
-    input_names=['image'],
-    output_names=['output'],
-    do_constant_folding=False
-  )
+    torch.onnx.export(
+        model,
+        input_data,  # model input (or a tuple for multiple inputs)
+        onnx_model_name,  # where to save the model (can be a file or file-like object)
+        export_params=True,  # store the trained parameter weights inside the model file
+        opset_version=16,  # the ONNX version to export the model to
+        input_names=['image'],
+        output_names=['output'],
+        do_constant_folding=False
+    )

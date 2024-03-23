@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from datasets.segmentation import SegmentationDataset
 from datamodules.dataset_split import DatasetSplits
-from utils.dataset_transformations import DatasetTransformations
+from datasets.dataset_transformations import DatasetTransformations
 
 
 class SegmentationDataModule(pl.LightningDataModule):

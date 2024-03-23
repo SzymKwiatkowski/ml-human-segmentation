@@ -6,7 +6,7 @@ import os
 import lightning.pytorch as pl
 
 from datamodules.segmentation import SegmentationDataModule
-from models.SegmentationModel import SegmentationModel
+from models.segmentation_model import SegmentationModel
 
 
 def load_config(path: Path) -> dict:
@@ -89,6 +89,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--use-neptune', action='store', default=False,
                         type=bool, help='Use neptune as logger')
     parser.add_argument('-d', '--data-root', action='store', default='data')
+    parser.add_argument('-b', '--batch-size', action='store', type=int, default=16)
 
     args = parser.parse_args()
     train(args)

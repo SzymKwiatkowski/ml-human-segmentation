@@ -23,14 +23,13 @@ class SegmentationModel(pl.LightningModule):
         self.loss = DiceLoss()
 
         task = 'binary'
-        metrics = MetricCollection([
+        metrics = MetricCollection(
             MetricCollection(
                 F1Score(task, threshold=0.5),
                 Precision(task, threshold=0.5),
                 Recall(task, threshold=0.5),
                 Dice(threshold=0.5),
-            ),
-        ])
+            ))
 
         self.train_metrics = metrics.clone('train_')
         self.val_metrics = metrics.clone('val_')
@@ -71,9 +70,10 @@ class SegmentationModel(pl.LightningModule):
         self.log_dict(self.test_metrics, sync_dist=True)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.trainer.model.parameters(), lr=3e-4)
+        optimizer = torch.optim.AdamW(self.trainer.model.parameters(), lr=3e-4, amsgrad=True)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode='min',
+            optimizer,
+            mode='min',
             factor=0.5,
             patience=5,
             min_lr=1e-6,

@@ -5,7 +5,7 @@ from onnxconverter_common import float16
 from onnxruntime.quantization import quantize_dynamic, QuantType
 from onnxruntime.quantization.shape_inference import quant_pre_process
 
-from models.SegmentationModel import SegmentationModel
+from models.segmentation_model import SegmentationModel
 from utils.model_utils import export_onnx
 
 
