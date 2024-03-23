@@ -25,6 +25,7 @@ class SegmentationDataModule(pl.LightningDataModule):
         self._images_path = images_path
         self._masks_path = masks_path
         self._batch_size = batch_size
+        self._train_size = train_size
         self._num_workers = num_workers
         self._shape = shape
 
@@ -32,14 +33,17 @@ class SegmentationDataModule(pl.LightningDataModule):
         self.val_dataset = None
         self.test_dataset = None
 
-        self.save_hyperparameters(ignore=['data_path', 'number_of_workers'])
+        self.save_hyperparameters(ignore=['data_path', 'number_of_workers', 'images_path', 'masks_path'])
 
     def setup(self, stage: Optional[str] = None):
+        if self.train_dataset is not None:
+            return
+
         images_path = self._data_path / self._images_path
         masks_path = self._data_path / self._masks_path
         images = list(images_path.glob('*.jpg'))
 
-        train_images, val_images, test_images = DatasetSplits.basic_split(images)
+        train_images, val_images, test_images = DatasetSplits.basic_split(images, train_size=self._train_size)
 
         images_num = len(images)
         masks_num = len(list(masks_path.glob('*.png')))

@@ -2,7 +2,7 @@ import lightning.pytorch as pl
 import segmentation_models_pytorch as smp
 import torch
 from monai.losses import DiceLoss
-from torchmetrics import Metric, MetricCollection, F1Score, Precision, Recall, Dice
+from torchmetrics import MetricCollection, F1Score, Precision, Recall, Dice
 
 
 class SegmentationModel(pl.LightningModule):
@@ -24,12 +24,13 @@ class SegmentationModel(pl.LightningModule):
 
         task = 'binary'
         metrics = MetricCollection(
-            MetricCollection(
-                F1Score(task, threshold=0.5),
-                Precision(task, threshold=0.5),
-                Recall(task, threshold=0.5),
-                Dice(threshold=0.5),
-            ))
+            {
+                "f1_score": F1Score(task, threshold=0.5),
+                "precision": Precision(task, threshold=0.5),
+                "recall": Recall(task, threshold=0.5),
+                "dice_score": Dice(threshold=0.5),
+            }
+        )
 
         self.train_metrics = metrics.clone('train_')
         self.val_metrics = metrics.clone('val_')

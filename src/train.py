@@ -4,6 +4,7 @@ import yaml
 import os
 
 import lightning.pytorch as pl
+from lightning.pytorch import loggers
 
 from datamodules.segmentation import SegmentationDataModule
 from models.segmentation_model import SegmentationModel
@@ -21,31 +22,34 @@ def train(args):
     max_epochs = args.epochs
     use_neptune = args.use_neptune
     data_root_dir = args.data_root
+    train_size = args.train_size
+    batch_size = args.batch_size
+    num_workers = args.workers
+    patience = args.patience
 
     logger = None
     if use_neptune:
         config = load_config(config_file)
         token = config['config']['NEPTUNE_API_TOKEN']
         project = config['config']['PROJECT_NAME']
-        logger = pl.loggers.NeptuneLogger(
+        logger = loggers.NeptuneLogger(
             project=project,
             api_token=token)
     else:
-        logger = pl.loggers.TensorBoardLogger(
+        logger = loggers.TensorBoardLogger(
             save_dir=Path('logs')
         )
 
     pl.seed_everything(42, workers=True)
-    patience = 25
     precision = 32
 
     datamodule = SegmentationDataModule(
         data_path=Path(data_root_dir),
         images_path=Path('Training_Images'),
         masks_path=Path('Ground_Truth'),
-        batch_size=16,
-        num_workers=4,
-        train_size=0.6
+        batch_size=batch_size,
+        num_workers=num_workers,
+        train_size=train_size
     )
 
     model = SegmentationModel(
@@ -68,8 +72,10 @@ def train(args):
         devices=1,
         callbacks=[model_summary_callback, checkpoint_callback, early_stop_callback, lr_monitor],
         accelerator='cuda',
+        strategy='ddp',
         precision=precision,
-        max_epochs=max_epochs
+        max_epochs=max_epochs,
+        log_every_n_steps=2
     )
 
     trainer.fit(model=model, datamodule=datamodule)
@@ -90,6 +96,9 @@ if __name__ == '__main__':
                         type=bool, help='Use neptune as logger')
     parser.add_argument('-d', '--data-root', action='store', default='data')
     parser.add_argument('-b', '--batch-size', action='store', type=int, default=16)
+    parser.add_argument('-p', '--patience', action='store', type=int, default=20)
+    parser.add_argument('-w', '--workers', action='store', type=int, default=4)
+    parser.add_argument('-t', '--train-size', action='store', type=float, default=0.6)
 
-    args = parser.parse_args()
-    train(args)
+    args_parsed = parser.parse_args()
+    train(args_parsed)
