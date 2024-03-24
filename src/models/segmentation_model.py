@@ -6,7 +6,20 @@ from torchmetrics import MetricCollection, F1Score, Precision, Recall, Dice
 
 
 class SegmentationModel(pl.LightningModule):
-    def __init__(self, encoder_name, encoder_weights, in_channels, out_channels, **kwargs):
+    def __init__(self,
+                 factor,
+                 lr,
+                 min_lr,
+                 patience,
+                 encoder_name,
+                 encoder_weights,
+                 in_channels,
+                 out_channels,
+                 monitored_metric: str = 'train_loss',
+                 lr_scheduler_interval: str = 'step',
+                 lr_scheduler_freq: int = 1,
+                 lr_scheduler_mode: str = 'min',
+                 **kwargs):
         super().__init__()
 
         activation_function = 'sigmoid' if out_channels == 1 else 'softmax'
@@ -19,6 +32,15 @@ class SegmentationModel(pl.LightningModule):
           classes=out_channels,
           activation=activation_function,
         )
+
+        self._lr = lr
+        self._factor = factor
+        self._patience = patience
+        self._min_lr = min_lr
+        self._monitored_metric = monitored_metric
+        self._lr_scheduler_interval = lr_scheduler_interval
+        self._lr_scheduler_freq = lr_scheduler_freq
+        self._lr_scheduler_mode = lr_scheduler_mode
 
         self.loss = DiceLoss()
 
@@ -71,13 +93,20 @@ class SegmentationModel(pl.LightningModule):
         self.log_dict(self.test_metrics)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.trainer.model.parameters(), lr=4e-4, amsgrad=True, weight_decay=1.5e-2)
+        optimizer = torch.optim.AdamW(
+            self.trainer.model.parameters(),
+            lr=self._lr,
+            betas=(0.9, 0.999),
+            eps=1e-08,
+            amsgrad=True,
+            weight_decay=1.25e-2)
+
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
-            mode='min',
-            factor=0.8,
-            patience=5,
-            min_lr=1e-6,
+            mode=self._lr_scheduler_mode,
+            factor=self._factor,
+            patience=self._patience,
+            min_lr=self._min_lr,
             verbose=True,
         )
 
@@ -85,8 +114,8 @@ class SegmentationModel(pl.LightningModule):
             'optimizer': optimizer,
             'lr_scheduler': {
                 'scheduler': scheduler,
-                'monitor': 'train_loss',
-                'interval': 'step',
-                'frequency': 1
+                'monitor': self._monitored_metric,
+                'interval': self._lr_scheduler_interval,
+                'frequency': self._lr_scheduler_freq
             }
         }

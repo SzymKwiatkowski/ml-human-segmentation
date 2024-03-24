@@ -57,6 +57,10 @@ def train(args):
         encoder_weights='imagenet',
         in_channels=3,
         out_channels=1,
+        min_lr=1e-6,
+        factor=0.8,
+        patience=5,
+        lr=5e-4
     )
 
     model.hparams.update(datamodule.hparams)
