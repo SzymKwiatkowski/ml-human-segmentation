@@ -49,7 +49,8 @@ def train(args):
         masks_path=Path('Ground_Truth'),
         batch_size=batch_size,
         num_workers=num_workers,
-        train_size=train_size
+        train_size=train_size,
+        shape=(640, 640),
     )
 
     model = SegmentationModel(
@@ -57,9 +58,9 @@ def train(args):
         encoder_weights='imagenet',
         in_channels=3,
         out_channels=1,
-        min_lr=1e-6,
-        factor=0.8,
-        patience=5,
+        min_lr=5e-5,
+        factor=0.935,
+        patience=10,
         lr=5e-4
     )
 
@@ -76,7 +77,6 @@ def train(args):
         devices=1,
         callbacks=[model_summary_callback, checkpoint_callback, early_stop_callback, lr_monitor],
         accelerator='cuda',
-        strategy='ddp',
         precision=precision,
         max_epochs=max_epochs,
         log_every_n_steps=2
