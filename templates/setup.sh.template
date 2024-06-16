@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pip install --quiet albumentations lightning monai segmentation-models-pytorch onnx onnxruntime onnxconverter_common torch-pruning
