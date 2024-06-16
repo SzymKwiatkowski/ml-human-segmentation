@@ -6,7 +6,7 @@
 		"context": "..",
 		"dockerfile": "Dockerfile"
 	},
-	"runArgs": ["--runtime=nvidia","--gpus=all"],
+	"runArgs": ["--gpus=all"],
 	"remoteEnv": {
 	},
 	"customizations": {

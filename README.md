@@ -1,4 +1,4 @@
-# ZPO Project
+# Human Segmentation
 Clone repo with to include submodules:
 ```bash
 git clone --recurse-submodules https://github.com/SzymKwiatkowski/ml-human-segmentation.git

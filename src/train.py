@@ -54,14 +54,15 @@ def train(args):
     )
 
     model = SegmentationModel(
-        encoder_name='resnet18',
+        encoder_name='resnet34',
         encoder_weights='imagenet',
         in_channels=3,
         out_channels=1,
         min_lr=5e-5,
         factor=0.935,
         patience=10,
-        lr=5e-4
+        lr=5e-4,
+        model='deeplabv3'
     )
 
     model.hparams.update(datamodule.hparams)

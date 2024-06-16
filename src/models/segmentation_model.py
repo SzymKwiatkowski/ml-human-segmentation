@@ -4,6 +4,8 @@ import torch
 from monai.losses import DiceLoss
 from torchmetrics import MetricCollection, F1Score, Precision, Recall, Dice
 
+import logging
+
 
 class SegmentationModel(pl.LightningModule):
     def __init__(self,
@@ -24,14 +26,44 @@ class SegmentationModel(pl.LightningModule):
 
         activation_function = 'sigmoid' if out_channels == 1 else 'softmax'
         self.activation = torch.nn.Sigmoid() if out_channels == 1 else torch.nn.Softmax(dim=1)
-
-        self.network = smp.Unet(
-          encoder_name=encoder_name,
-          encoder_weights=encoder_weights,
-          in_channels=in_channels,
-          classes=out_channels,
-          activation=activation_function,
-        )
+        self_logger = logging.getLogger(__name__)
+        logging.basicConfig(filename='myapp.log', level=logging.INFO)
+        if kwargs['model'] == "unet":
+            self_logger.info("Selecting unet")
+            self.network = smp.Unet(
+                encoder_name=encoder_name,
+                encoder_weights=encoder_weights,
+                in_channels=in_channels,
+                classes=out_channels,
+                activation=activation_function,
+                )
+        elif kwargs['model'] == "unet++":
+            self_logger.info("Selecting unet++")
+            self.network = smp.UnetPlusPlus(
+                encoder_name=encoder_name,
+                encoder_weights=encoder_weights,
+                in_channels=in_channels,
+                classes=out_channels,
+                activation=activation_function,
+                )
+        elif kwargs['model'] == "deeplabv3":
+            self_logger.info("Selecting deeplab")
+            self.network = smp.DeepLabV3(
+                encoder_name=encoder_name,
+                encoder_weights=encoder_weights,
+                in_channels=in_channels,
+                classes=out_channels,
+                activation=activation_function,
+                )
+        else:
+            self_logger.info("Selecting unet")
+            self.network = smp.Unet(
+                encoder_name=encoder_name,
+                encoder_weights=encoder_weights,
+                in_channels=in_channels,
+                classes=out_channels,
+                activation=activation_function,
+                )
 
         self._lr = lr
         self._factor = factor
